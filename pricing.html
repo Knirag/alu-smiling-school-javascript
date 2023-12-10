@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover the Academy of Radiant Smiles">
+  <title>Enrollment</title>
+
+  <link rel="shortcut icon" href="Images/images/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Coiny&display=swap" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header-pricing text-white">
+    <!-- Navigation Bar -->
+    <nav class="d-flex flex-md-row flex-column justify-content-between ml-5 mr-5 pt-5 pb-5">
+    <!-- Middle -->
+    <div class="middle d-flex flex-column justify-content-center align-items-center mt-5">
+        <div class="imagotype d-flex flex-sm-row flex-column">
+          <div class="h2 mr-3">What makes</div>
+          <div class="d-flex flex-row">
+            <img class="imagotype__img img-fluid mb-sm-2 align-self-center mr-sm-2" style="height: 1.875rem; width: 2.3125rem;" src="Images/images/smile_off.png" alt="Smile Face">
+            <img class="imagotype__logo img-fluid align-self-center" style="height: 3rem; width: 10rem;" src="Images/images/logo.png" alt="Radiant Smiles">
+          </div>
+          <div class="h2 ml-1">special?</div>
+        </div>
+      </div>
+    <!-- Price -->
+    <div class="d-flex flex-column">
+      <div class="mt-5 mb-5">
+        <div class="h1 text-center" style="font-size: 3.75rem; font-weight: 700;">Embark on a Radiant Journey!</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quotes Section -->
+  <section class="quotes">
+    <!-- Loader -->
+    <div class="loader" id="quote-loader"></div>
+
+    <!-- Carousel Container -->
+    <div id="quote-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <!-- Quotes will be dynamically loaded here -->
+        </div>
+        <!-- Left and right controls -->
+        <a class="carousel-control-prev" href="#quote-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#quote-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+  </section>
+
+  <!-- JavaScript for Dynamic Loading of Quotes -->
+  <script>
+    // Function to load quotes dynamically
+    function loadQuotes() {
+        // Show loader
+        $('#quote-loader').show();
+
+        // Make Ajax request to fetch quotes
+        $.ajax({
+            url: 'https://smileschool-api.alx-tools.com/quotes',
+            method: 'GET',
+            success: function (data) {
+                // Hide loader
+                $('#quote-loader').hide();
+
+                // Display quotes in the carousel
+                displayQuotes(data);
+            },
+            error: function () {
+                // Handle error
+                console.error('Error fetching quotes');
+            }
+        });
+    }
+
+    // Function to display quotes in the carousel
+    function displayQuotes(quotes) {
+        var carouselInner = $('#quote-carousel .carousel-inner');
+        carouselInner.empty();
+
+        // Loop through quotes and create carousel items
+        quotes.forEach(function (quote, index) {
+            var activeClass = index === 0 ? 'active' : '';
+            var carouselItem = `<div class="carousel-item ${activeClass}">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-6 offset-md-3 text-center">
+                                                <p class="lead">${quote.text}</p>
+                                                <p class="font-weight-bold">${quote.name}</p>
+                                                <p>${quote.title}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+            carouselInner.append(carouselItem);
+        });
+    }
+
+    // Load quotes on document ready
+    $(document).ready(function () {
+        loadQuotes();
+    });
+  </script>
+
+</body>
+</html>

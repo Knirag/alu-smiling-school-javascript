@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Exploring the joy of learning at the Academy of Smiles">
+  <title>Our Courses</title>
+
+  <link rel="shortcut icon" href="Images/images/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Coiny&display=swap" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header-courses text-white">
+    <!-- Navigation Bar -->
+    <nav class="d-flex flex-md-row flex-column justify-content-between ml-5 mr-5 pt-5 pb-5">
+
+    <!-- Motivational Quote -->
+    <div class="middle d-none d-md-block">
+      <div class="d-flex flex-row justify-content-center">
+        <h1 class="title phrase-title m-0" style="font-size: 2rem;">"Don't frown because it's over. <span style="color: #FF80AB;">Smile</span> because it happened."</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Courses Section -->
+  <section class="courses">
+    <!-- Loader -->
+    <div class="loader" id="courses-loader"></div>
+
+    <!-- Filters -->
+    <div class="container mt-4 mb-4">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="topic-select">Topic:</label>
+          <select id="topic-select" class="form-control">
+            <!-- Topics will be dynamically loaded here -->
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="sort-select">Sort by:</label>
+          <select id="sort-select" class="form-control">
+            <!-- Sort options will be dynamically loaded here -->
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="search-input">Search:</label>
+          <input type="text" id="search-input" class="form-control" placeholder="Enter keywords">
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Cards Container -->
+    <div class="container" id="video-cards-container">
+      <!-- Video cards will be dynamically loaded here -->
+    </div>
+  </section>
+
+  <!-- JavaScript for Dynamic Loading of Video Cards and Filters -->
+  <script>
+    // Function to load courses dynamically
+    function loadCourses(searchValue, topicValue, sortByValue) {
+        // Show loader
+        $('#courses-loader').show();
+
+        // Make Ajax request to fetch courses
+        $.ajax({
+            url: 'https://smileschool-api.alx-tools.com/courses',
+            method: 'GET',
+            data: {
+                q: searchValue,
+                topic: topicValue,
+                sort: sortByValue
+            },
+            success: function (data) {
+                // Hide loader
+                $('#courses-loader').hide();
+
+                // Display video cards
+                displayVideoCards(data.courses);
+
+                // Update topics and sort options
+                updateFilters(data.topics, data.sorts);
+
+                // Set search input value
+                $('#search-input').val(searchValue);
+            },
+            error: function () {
+                // Handle error
+                console.error('Error fetching courses');
+            }
+        });
+    }
+
+    // Function to display video cards
+    function displayVideoCards(courses) {
+        var videoCardsContainer = $('#video-cards-container');
+        videoCardsContainer.empty();
+
+        // Loop through courses and create video cards
+        courses.forEach(function (course) {
+            var videoCard = `<div class="card mb-4">
+                                <img src="${course.image}" class="card-img-top" alt="${course.title}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${course.title}</h5>
+                                    <p class="card-text">${course.description}</p>
+                                    <a href="#" class="btn btn-primary">Watch Now</a>
+                                </div>
+                              </div>`;
+            videoCardsContainer.append(videoCard);
+        });
+    }
+
+    // Function to update filters
+    function updateFilters(topics, sorts) {
+        var topicSelect = $('#topic-select');
+        var sortSelect = $('#sort-select');
+
+        // Clear existing options
+        topicSelect.empty();
+        sortSelect.empty();
+
+        // Add new options
+        topics.forEach(function (topic) {
+            topicSelect.append(`<option value="${topic}">${topic}</option>`);
+        });
+
+        sorts.forEach(function (sort) {
+            sortSelect.append(`<option value="${sort}">${sort}</option>`);
+        });
+    }
+
+    // Event listeners for filter changes
+    $('#topic-select, #sort-select, #search-input').on('change', function () {
+        var searchValue = $('#search-input').val();
+        var topicValue = $('#topic-select').val();
+        var sortByValue = $('#sort-select').val();
+
+        // Load courses based on filter changes
+        loadCourses(searchValue, topicValue, sortByValue);
+    });
+
+    // Load courses on document ready
+    $(document).ready(function () {
+        loadCourses('', '', '');
+    });
+  </script>
+
+</body>
+</html>
